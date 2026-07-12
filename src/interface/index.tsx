@@ -57,6 +57,9 @@ export interface Profile {
   id: string;
   name: string;
   email: string;
+  profiles?: {
+    name: string;
+  };
   avatar_url: string | null;
   role: 'admin' | 'employee';
   job_title: string;
