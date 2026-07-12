@@ -1,7 +1,6 @@
 import { Profile } from '@/interface';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
 
 const EmployeeCard = ({ user }: { user: Profile }) => {
   return (

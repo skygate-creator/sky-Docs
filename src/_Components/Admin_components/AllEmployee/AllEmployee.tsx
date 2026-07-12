@@ -5,7 +5,7 @@ import React, { useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import EmployeeCard from '../EmployeeCard/EmployeeCard';
 
-const AllEmployee = ({ users }: { users: RecentClient[] }) => {
+const AllEmployee = ({ users }: { users: Profile[] }) => {
   const [search, setSearch] = useState('');
 
   const filteredUsers = useMemo(() => {
