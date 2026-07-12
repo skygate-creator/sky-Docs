@@ -5,7 +5,7 @@ import AllEmployee from '@/_Components/Admin_components/AllEmployee/AllEmployee'
 import { RecentClient } from '@/interface';
 
 const Employee = async () => {
-  const users: RecentClient[] = await getAllUsers();
+  const users = await getAllUsers();
 
   return (
     <div className="p-5 flex flex-col gap-5">
