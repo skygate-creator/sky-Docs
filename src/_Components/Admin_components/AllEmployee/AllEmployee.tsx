@@ -10,8 +10,10 @@ const AllEmployee = ({ users }: { users: Profile[] }) => {
 
   const filteredUsers = useMemo(() => {
     if (!search.trim()) return users;
-    return users.filter((user) =>
-      user?.name?.toLowerCase().includes(search.trim().toLowerCase()),
+    return users.filter(
+      (user) =>
+        user?.name?.toLowerCase().includes(search.trim().toLowerCase()) ||
+        user?.job_title?.toLowerCase().includes(search.trim().toLowerCase()),
     );
   }, [users, search]);
 

@@ -35,8 +35,10 @@ const AllClintes = ({ clients }: { clients: RecentClient[] }) => {
     }
 
     // لو فيه بحث، دور في الـ array كله من غير حد أقصى
-    return clients.filter((client) =>
-      client.customer_name.toLowerCase().includes(trimmedSearch),
+    return clients.filter(
+      (client) =>
+        client.customer_name.toLowerCase().includes(trimmedSearch) ||
+        client.phone.toLowerCase().includes(trimmedSearch),
     );
   }, [clients, search]);
 
@@ -54,7 +56,7 @@ const AllClintes = ({ clients }: { clients: RecentClient[] }) => {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="ابحث باسم العميل..."
+          placeholder="ابحث باسم العميل او رقم التليفون..."
           className="w-full rounded-lg border border-neutral-300 py-2 pr-10 pl-4 text-sm outline-none focus:ring-1 focus:ring-primary-200 duration-200"
         />
       </div>

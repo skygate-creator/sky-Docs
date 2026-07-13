@@ -18,7 +18,7 @@ const EmployeeDetailsCard = ({
             src={user.avatar_url ?? '/login_img.webp'}
             alt="employee_img"
             fill
-            className="object-cover w-full h-full rounded-lg"
+            className="object-cover object-top w-full h-full rounded-lg"
           />
         </div>
         <div className="details flex flex-col gap-2">

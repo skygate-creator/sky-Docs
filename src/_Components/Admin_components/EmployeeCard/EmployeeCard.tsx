@@ -5,12 +5,14 @@ import Link from 'next/link';
 const EmployeeCard = ({ user }: { user: Profile }) => {
   return (
     <div className="p-5 flex flex-col items-center gap-5 border-2 border-secondary-200 rounded-lg">
-      <div className="img w-28 h-28 rounded-full relative">
+      <div className="img w-36 h-36 relative">
         <Image
           src={user.avatar_url ?? '/login_img.webp'}
           fill
           alt="employee_img"
-          className="w-full h-full rounded-full"
+          priority
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="w-full h-full object-cover object-top rounded-lg"
         />
       </div>
       <div className="title flex flex-col justify-center items-center gap-1">

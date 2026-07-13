@@ -7,12 +7,15 @@ const NavClient = ({
   id,
   name,
   job,
+  user_avatar,
 }: {
   id: string;
   name: string;
   job: string;
+  user_avatar: string | null;
 }) => {
   const [is_clicked, setIsClicked] = useState<boolean>(false);
+
   return (
     <nav className="sticky top-0 left-0 right-0 z-50 py-2 px-3 border-b border-secondary-200 bg-white">
       <div className="flex justify-between items-center">
@@ -24,17 +27,17 @@ const NavClient = ({
         </div>
         <div
           onClick={() => setIsClicked(!is_clicked)}
-          className="relative w-10 h-10 rounded-lg overflow-hidden bg-neutral-300 cursor-pointer"
+          className="relative w-14 h-14 rounded-lg overflow-hidden bg-neutral-300 cursor-pointer"
         >
           <Image
-            src="/login_img.webp"
-            alt="Avatar"
+            src={user_avatar ?? '/login_img.webp'}
+            alt="user_image"
             fill
-            className="object-cover"
+            className="object-cover object-top w-full h-full"
           />
         </div>
       </div>
-      {is_clicked && <NavDrop />}
+      {is_clicked && <NavDrop id={id} />}
     </nav>
   );
 };
