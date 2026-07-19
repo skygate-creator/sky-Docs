@@ -13,6 +13,7 @@ const customerDetails = async ({
   const { id } = await params;
   const customerDetails: ClientDetails = await getCustomerById(id);
   const user = await getUserProfile();
+
   return (
     <section className="flex flex-col gap-5 p-5">
       <CustomerInfo client={customerDetails} />

@@ -79,26 +79,73 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // منع الأدمن من صفحات الموظف
+  // ===========================
+  // حماية صفحات Employee
+  // ===========================
   if (pathname.startsWith('/employee') && profile.role !== 'employee') {
     const url = request.nextUrl.clone();
-    url.pathname = '/admin/dashboard';
+
+    if (profile.role === 'admin') {
+      url.pathname = '/admin/dashboard';
+    } else {
+      url.pathname = '/dispatcher/dashboard';
+    }
+
     return NextResponse.redirect(url);
   }
 
-  // منع الموظف من صفحات الأدمن
+  // ===========================
+  // حماية صفحات Admin
+  // ===========================
   if (pathname.startsWith('/admin') && profile.role !== 'admin') {
     const url = request.nextUrl.clone();
-    url.pathname = '/employee/dashboard';
+
+    if (profile.role === 'employee') {
+      url.pathname = '/employee/newRequest';
+    } else {
+      url.pathname = '/dispatcher/newRequest';
+    }
+
     return NextResponse.redirect(url);
   }
 
+  // ===========================
+  // حماية صفحات Dispatcher
+  // ===========================
+  if (pathname.startsWith('/dispatcher') && profile.role !== 'dispatcher') {
+    const url = request.nextUrl.clone();
+
+    if (profile.role === 'admin') {
+      url.pathname = '/admin/dashboard';
+    } else {
+      url.pathname = '/employee/dashboard';
+    }
+
+    return NextResponse.redirect(url);
+  }
+
+  // ===========================
   // لو المستخدم مسجل دخول وحاول يدخل صفحة اللوجين
+  // ===========================
   if (isPublicRoute) {
     const url = request.nextUrl.clone();
 
-    url.pathname =
-      profile.role === 'admin' ? '/admin/dashboard' : '/employee/dashboard';
+    switch (profile.role) {
+      case 'admin':
+        url.pathname = '/admin/dashboard';
+        break;
+
+      case 'employee':
+        url.pathname = '/employee/dashboard';
+        break;
+
+      case 'dispatcher':
+        url.pathname = '/dispatcher/newRequest';
+        break;
+
+      default:
+        url.pathname = '/auth/login';
+    }
 
     return NextResponse.redirect(url);
   }

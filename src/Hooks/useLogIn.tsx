@@ -61,12 +61,6 @@ export const useLogin = () => {
         position: 'top-center',
       });
 
-      // if (profile.role === 'admin') {
-      //   router.replace('/admin/dashboard');
-      // } else {
-      //   router.replace('/employee/dashboard');
-      // }
-
       router.refresh();
     },
 

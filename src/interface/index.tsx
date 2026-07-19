@@ -68,3 +68,25 @@ export interface Profile {
   created_at: string;
   updated_at: string;
 }
+
+export interface Request {
+  id?: string;
+  dispatcher_id?: string;
+  employee_id: string;
+  phone: string;
+  destination: string;
+  trip_type: string;
+  passengers: string;
+  departure_airport: string;
+  arrival_airport: string;
+  lead_source: string;
+  customer_notes: string | null;
+  is_read?: boolean;
+  created_at?: string;
+}
+
+//  user in dispacher
+export interface UserDispatcher {
+  id: string;
+  name: string;
+}

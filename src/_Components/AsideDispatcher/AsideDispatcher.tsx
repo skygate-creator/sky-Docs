@@ -1,17 +1,21 @@
 'use client';
 import { aside } from '@/interface';
-import { LayoutDashboard, Users, Globe, UserRoundPen } from 'lucide-react';
+import { LayoutDashboard, Globe, SendHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const AsideEmployee = () => {
+const AsdideDispatcher = () => {
   const data: aside[] = [
+    // {
+    //   name: 'الصفحة الرئيسية',
+    //   icon: LayoutDashboard,
+    //   href: '/dispatcher/dashboard',
+    // },
     {
-      name: 'الصفحة الرئيسية',
-      icon: LayoutDashboard,
-      href: '/employee/dashboard',
+      name: 'اضافة ريكويست',
+      icon: SendHorizontal,
+      href: '/dispatcher/newRequest',
     },
-    { name: 'العملاء', icon: Users, href: '/employee/customer' },
   ];
   const pathname = usePathname();
   return (
@@ -48,4 +52,4 @@ const AsideEmployee = () => {
   );
 };
 
-export default AsideEmployee;
+export default AsdideDispatcher;

@@ -21,6 +21,7 @@ const useAddClient = () => {
       .single();
 
     if (error) throw error;
+
     return data; // { id: ... }
   };
 

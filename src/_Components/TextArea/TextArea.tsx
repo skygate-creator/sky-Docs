@@ -1,6 +1,5 @@
 'use client';
-// import { InputProps } from '../../interfaces/index';
-export default function Input({
+export default function TextArea({
   label,
   name,
   type = 'text',
@@ -8,21 +7,20 @@ export default function Input({
   formik,
 }: any) {
   return (
-    <div className="">
+    <div className="mb-4">
       {/* LABEL */}
       <label className="block mb-1 text-14 font-medium text-primary">
         {label}
       </label>
 
       {/* INPUT */}
-      <input
+      <textarea
         name={name}
         value={formik.values[name]}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
-        type={type}
-        className="w-full border rounded-md p-2 outline-none focus:ring-1 bg-neutral-100 focus:ring-primary-200 duration-200"
         placeholder={placeholder}
+        className="w-full border rounded-md p-2 outline-none focus:ring-1 h-[150px] resize-none focus:ring-primary/45 duration-200"
       />
 
       {/* ERROR */}

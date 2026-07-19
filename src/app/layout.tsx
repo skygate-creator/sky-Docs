@@ -7,6 +7,7 @@ import NavServer from '@/_Components/Navbar/NavServer';
 import getUserProfile from '../../lib/Helper/getUserProfile';
 import AsideEmployee from '@/_Components/AsideEmployee/AsideEmployee';
 import AsideAdmin from '@/_Components/AsideAdmin/AsideAdmin';
+import AsdideDispatcher from '@/_Components/AsideDispatcher/AsideDispatcher';
 
 const cairoFont = Cairo({
   variable: '--font-cairo',
@@ -24,6 +25,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const user = await getUserProfile();
+
   return (
     <html
       dir="rtl"
@@ -38,14 +40,19 @@ export default async function RootLayout({
           >
             <div className={`${!user ? 'hidden' : ''} aside`}>
               <div
-                className={`aside_employee ${user?.role === 'admin' ? 'hidden' : ''}`}
+                className={`aside_employee ${user?.role === 'admin' || user?.role === 'dispatcher' ? 'hidden' : ''}`}
               >
                 <AsideEmployee />
               </div>
               <div
-                className={`aside_admin ${user?.role !== 'admin' ? 'hidden' : ''}`}
+                className={`aside_admin ${user?.role === 'employee' || user?.role === 'dispatcher' ? 'hidden' : ''}`}
               >
                 <AsideAdmin />
+              </div>
+              <div
+                className={`aside_dispatcher ${user?.role === 'admin' || user?.role === 'employee' ? 'hidden' : ''}`}
+              >
+                <AsdideDispatcher />
               </div>
             </div>
             <div className="resurt">

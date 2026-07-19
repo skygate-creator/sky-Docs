@@ -2,7 +2,6 @@ import React, { Suspense } from 'react';
 import getAllUsers from '../../../../lib/Helper/getAllUsers';
 import EmployeeCard from '@/_Components/Admin_components/EmployeeCard/EmployeeCard';
 import AllEmployee from '@/_Components/Admin_components/AllEmployee/AllEmployee';
-import { RecentClient } from '@/interface';
 
 const Employee = async () => {
   const users = await getAllUsers();

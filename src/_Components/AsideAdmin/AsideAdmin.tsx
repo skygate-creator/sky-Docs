@@ -35,7 +35,7 @@ const AsideAdmin = () => {
               <Link
                 href={item.href}
                 key={index}
-                className={`${pathname === item.href ? 'bg-primary-400 text-white' : ''} font-semibold text-neutral-700 flex items-center justify-between gap-3 mx-2 p-2 rounded-md hover:bg-primary-400 hover:text-white duration-200`}
+                className={`${pathname.startsWith(item.href) ? 'bg-primary-400 text-white' : ''} font-semibold text-neutral-700 flex items-center justify-between gap-3 mx-2 p-2 rounded-md hover:bg-primary-400 hover:text-white duration-200`}
               >
                 <p>{item.name}</p>
                 <Icon className="w-6 h-6" />

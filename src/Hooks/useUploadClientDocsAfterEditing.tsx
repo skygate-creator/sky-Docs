@@ -65,7 +65,6 @@ export const useUploadClientDocsAfterEditing = () => {
         .from(BUCKET_NAME)
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: true,
         });
 
       if (uploadError) throw uploadError;
