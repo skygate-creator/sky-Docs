@@ -1,5 +1,5 @@
 import { ClientDetails } from '@/interface';
-import { formatArabicDate } from '../../Utils/formatDate';
+import { formatDate } from '../../Utils/formatData';
 import { Calendar, Phone, Dot } from 'lucide-react';
 
 const CustomerInfo = ({ client }: { client: ClientDetails }) => {
@@ -11,7 +11,7 @@ const CustomerInfo = ({ client }: { client: ClientDetails }) => {
           <div className="flex items-center gap-1 text-secondary-400">
             <Calendar className="w-4 h-4 " />
             <p className="font-medium text-16">
-              {formatArabicDate(client.created_at)}
+              {formatDate(client.created_at)}
             </p>
           </div>
           <Dot className="w-7 h-7 text-secondary-400" />
