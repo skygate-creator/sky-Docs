@@ -1,6 +1,6 @@
 'use client';
 import { aside } from '@/interface';
-import { LayoutDashboard, Users, Globe, UserRoundPen } from 'lucide-react';
+import { LayoutDashboard, Users, Globe, StickyNote } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -12,6 +12,7 @@ const AsideEmployee = () => {
       href: '/employee/dashboard',
     },
     { name: 'العملاء', icon: Users, href: '/employee/customer' },
+    { name: 'الريكويستات', icon: StickyNote, href: '/employee/newRequest' },
   ];
   const pathname = usePathname();
   return (

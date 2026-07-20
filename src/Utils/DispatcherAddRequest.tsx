@@ -121,7 +121,7 @@ const DispatcherAddRequest = ({ users }: { users: any }) => {
           >
             {isPending ?
               <span className="loader"></span>
-            : 'حفظ'}
+            : 'إرسال الريكويست'}
           </button>
         </div>
       </form>

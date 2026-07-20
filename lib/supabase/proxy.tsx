@@ -88,7 +88,7 @@ export async function updateSession(request: NextRequest) {
     if (profile.role === 'admin') {
       url.pathname = '/admin/dashboard';
     } else {
-      url.pathname = '/dispatcher/dashboard';
+      url.pathname = '/dispatcher/newRequest';
     }
 
     return NextResponse.redirect(url);
