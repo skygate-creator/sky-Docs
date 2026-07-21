@@ -3,6 +3,7 @@ import { Request } from '@/interface';
 import { BookMarked, MapPin, MoveLeft, Clock } from 'lucide-react';
 import { formatDate } from '../../Utils/formatData';
 import useUpdateRequest from '@/Hooks/useUpdateRequest';
+import Link from 'next/link';
 const RequestBox = ({ request }: { request: Request }) => {
   const { mutate: updateRequest, isPending } = useUpdateRequest();
   return (
@@ -13,7 +14,14 @@ const RequestBox = ({ request }: { request: Request }) => {
             <BookMarked className="w-5 h-5 text-primary-500" />
           </span>
           <div className="flex flex-col gap-2">
-            <p className="font-bold text-20">{request.phone}</p>
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href={`https://wa.me/${request.phone}`}
+              className="font-bold text-20 underline hover:text-primary-500"
+            >
+              {request.phone}
+            </Link>
             <div className="flex items-center gap-1 text-secondary-400 ">
               <MapPin className="w-4 h-4 " />
               <p className="text-14">{request.destination}</p>

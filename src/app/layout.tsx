@@ -8,6 +8,7 @@ import getUserProfile from '../../lib/Helper/getUserProfile';
 import AsideEmployee from '@/_Components/AsideEmployee/AsideEmployee';
 import AsideAdmin from '@/_Components/AsideAdmin/AsideAdmin';
 import AsdideDispatcher from '@/_Components/AsideDispatcher/AsideDispatcher';
+import { RequestsProvider } from '@/context/RequestsContext.tsx';
 
 const cairoFont = Cairo({
   variable: '--font-cairo',
@@ -57,7 +58,7 @@ export default async function RootLayout({
             </div>
             <div className="resurt">
               <NavServer />
-              {children}
+              <RequestsProvider>{children}</RequestsProvider>
             </div>
           </main>
         </ReactQueryProvider>

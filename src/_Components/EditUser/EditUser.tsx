@@ -64,7 +64,7 @@ const EditUser = ({ customer }: { customer: RecentClient }) => {
           <button
             type="submit"
             disabled={isPending}
-            className="rounded-full w-full bg-primary-500 py-3 text-14 font-bold text-white hover:bg-primary-600 disabled:opacity-50"
+            className="rounded-md w-full mt-4 bg-primary-500 py-3 text-14 font-bold text-white hover:bg-primary-600 disabled:opacity-50"
           >
             {isPending ?
               <span className="loader"></span>

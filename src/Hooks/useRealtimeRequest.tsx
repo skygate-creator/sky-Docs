@@ -1,13 +1,19 @@
-// hooks/useRealtimeRequests.ts
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { createClient } from '../../lib/supabase/client';
 import { Request } from '@/interface';
+import { useRequests } from '../context/RequestsContext.tsx';
 
 export const useRealtimeRequests = (initialData: Request[]) => {
-  const [requests, setRequests] = useState<Request[]>(initialData);
+  const { requests, setRequests, addRequest } = useRequests();
 
+  // أول تحميل للداتا من السيرفر
+  useEffect(() => {
+    setRequests(initialData);
+  }, [initialData, setRequests]);
+
+  // Realtime
   useEffect(() => {
     const supabase = createClient();
 
@@ -22,8 +28,9 @@ export const useRealtimeRequests = (initialData: Request[]) => {
         },
         (payload) => {
           const newRequest = payload.new as Request;
+
           if (!newRequest.is_read) {
-            setRequests((prev) => [newRequest, ...prev]);
+            addRequest(newRequest);
           }
         },
       )
@@ -32,7 +39,7 @@ export const useRealtimeRequests = (initialData: Request[]) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [initialData]);
+  }, [addRequest]);
 
   return requests;
 };

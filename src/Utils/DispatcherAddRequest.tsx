@@ -112,7 +112,7 @@ const DispatcherAddRequest = ({ users }: { users: any }) => {
             label="بيانات المسافرين"
             name="passengers"
             formik={formik}
-            placeholder="2 كبار , 1طفل عمرة 5 سنوات"
+            placeholder="2 بالغين , 1طفل عمرة 5 سنوات"
           />
           <button
             type="submit"

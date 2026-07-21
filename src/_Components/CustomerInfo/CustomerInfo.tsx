@@ -1,3 +1,4 @@
+'use client';
 import { ClientDetails } from '@/interface';
 import { formatDate } from '../../Utils/formatData';
 import { Calendar, Phone, Dot } from 'lucide-react';

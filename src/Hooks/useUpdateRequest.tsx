@@ -1,14 +1,14 @@
-import { AddClientForm, Request } from '@/interface';
 import { createClient } from '../../lib/supabase/client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { useRequests } from '../context/RequestsContext.tsx';
 
 const useUpdateRequest = () => {
   const supabase = createClient();
-  const queryClient = useQueryClient();
+  const { markAsRead } = useRequests();
 
-  const addClient = async (id: string | undefined) => {
-    const { data, error } = await supabase
+  const updateRequest = async (id: string | undefined) => {
+    const { error } = await supabase
       .from('requests')
       .update({
         is_read: true,
@@ -17,20 +17,19 @@ const useUpdateRequest = () => {
 
     if (error) throw error;
 
-    return data;
+    return id;
   };
 
   return useMutation({
-    mutationKey: ['updaterequest'],
-    mutationFn: addClient,
+    mutationKey: ['updateRequest'],
+    mutationFn: updateRequest,
 
-    onSuccess: () => {
+    onSuccess: (id) => {
+      // تحديث الـ UI فورًا
+      markAsRead(id as string);
+
       toast.success('تم الإستلام بنجاح', {
         position: 'top-center',
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ['requests'],
       });
     },
 
