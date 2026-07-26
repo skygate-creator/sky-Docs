@@ -1,10 +1,9 @@
 import React from 'react';
 import getUserById from '../../../../../lib/Helper/getUserById';
-import getAllClients from '../../../../../lib/Helper/getAllClients';
 import getUserClientsById from '../../../../../lib/Helper/getUserClientsById';
 import EmployeeDetailsCard from '@/_Components/Admin_components/EmployeeDetailsCard/EmployeeDetailsCard';
-import AllClintes from '@/_Components/AllClients/AllClients';
 import AdminAllClintes from '@/_Components/Admin_components/AdminAllClients/AdminAllClients';
+import getRequestCountById from '../../../../../lib/Helper/getRequestCountById';
 
 const employeeDetails = async ({
   params,
@@ -14,6 +13,8 @@ const employeeDetails = async ({
   const { id } = await params;
   const user = await getUserById(id);
   const userClients = await getUserClientsById(id);
+  const employeeRequestCount = await getRequestCountById(id);
+
   return (
     <div className="p-5 flex flex-col gap-5">
       <div className="title flex flex-col gap-2">
@@ -24,7 +25,11 @@ const employeeDetails = async ({
           عرض ملف الموظف الشخصي وقائمة العملاء المرتبطين به
         </p>
       </div>
-      <EmployeeDetailsCard user={user} userClientsLength={userClients.length} />
+      <EmployeeDetailsCard
+        user={user}
+        userClientsLength={userClients.length}
+        employeeRequestCount={employeeRequestCount}
+      />
       <AdminAllClintes clients={userClients} />
     </div>
   );

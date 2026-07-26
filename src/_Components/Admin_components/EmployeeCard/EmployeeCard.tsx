@@ -23,7 +23,7 @@ const EmployeeCard = ({ user }: { user: Profile }) => {
         href={`/admin/employee/${user.id}`}
         className="btn w-full bg-primary-600 p-2 rounded-lg text-white text-center"
       >
-        عرض العملاء
+        عرض التفاصيل
       </Link>
     </div>
   );

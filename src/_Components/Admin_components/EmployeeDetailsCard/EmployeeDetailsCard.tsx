@@ -1,14 +1,17 @@
 import { Profile } from '@/interface';
 import Image from 'next/image';
 import React from 'react';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, LibraryBig } from 'lucide-react';
+import Link from 'next/link';
 
 const EmployeeDetailsCard = ({
   user,
   userClientsLength,
+  employeeRequestCount,
 }: {
   user: Profile;
   userClientsLength: number;
+  employeeRequestCount: number;
 }) => {
   return (
     <div className="flex justify-between items-center p-5 border-2 border-secondary-200 rounded-lg w-full">
@@ -29,13 +32,34 @@ const EmployeeDetailsCard = ({
               {user.job_title}
             </p>
           </div>
+          <div className="flex items-center gap-1">
+            <LibraryBig className="w-4 h-4 text-green-700" />
+            <Link
+              href={`/admin/employee/employeeRequets/${user.id}`}
+              className="w-full rounded-lg text-center text-16 text-primary-600 hover:underline"
+            >
+              عرض جميع الريكويستات
+            </Link>
+          </div>
         </div>
       </div>
-      <div className="more_info bg-neutral-200 p-5 rounded-lg flex flex-col gap-2 justify-center items-center">
-        <h3 className="text-16 font-medium text-secondary-400">عدد العملاء</h3>
-        <p className="text-24 font-bold text-primary-500">
-          {userClientsLength}
-        </p>
+      <div className="flex items-center gap-5">
+        <div className="more_info bg-neutral-200 p-5 rounded-lg flex flex-col gap-2 justify-center items-center">
+          <h3 className="text-16 font-medium text-secondary-400">
+            عدد الريكويستات
+          </h3>
+          <p className="text-24 font-bold text-primary-500">
+            {employeeRequestCount}
+          </p>
+        </div>
+        <div className="more_info bg-neutral-200 p-5 rounded-lg flex flex-col gap-2 justify-center items-center">
+          <h3 className="text-16 font-medium text-secondary-400">
+            عدد العملاء
+          </h3>
+          <p className="text-24 font-bold text-primary-500">
+            {userClientsLength}
+          </p>
+        </div>
       </div>
     </div>
   );

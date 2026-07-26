@@ -1,9 +1,16 @@
 import React from 'react';
 import getEmployeeRequests from '../../../../lib/Helper/getEmployeeRequests';
 import RequestsList from '@/_Components/RequestsList/RequestsList';
+import { Request } from '@/interface';
+import RequestAnlayses from '@/_Components/RequestAnlayses/RequestAnlayses';
 
 const newRequest = async () => {
-  const request = await getEmployeeRequests();
+  const request: Request[] = await getEmployeeRequests();
+  // const newRequests: Request[] = request.filter((req) => req.is_read === false);
+  // const acceptedRequests: Request[] = request.filter(
+  //   (req) => req.is_read === true,
+  // );
+  // const totalRequests: number = request.length;
 
   return (
     <section className="p-5 flex flex-col gap-5">
@@ -15,7 +22,11 @@ const newRequest = async () => {
           جميع الطلبات الجديدة المرسلة إليك تظهر هنا بشكل مباشر
         </p>
       </div>
-
+      {/* <RequestAnlayses
+        newRequests={newRequests}
+        acceptedRequests={acceptedRequests}
+        totalRequests={totalRequests}
+      /> */}
       <RequestsList Requests={request} />
     </section>
   );
