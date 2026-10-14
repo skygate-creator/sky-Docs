@@ -2,8 +2,11 @@
 
 import { useLogin } from '@/Hooks/useLogIn';
 import { useFormik } from 'formik';
+import { useState } from 'react';
 import {
   CloudCheck,
+  Eye,
+  EyeOff,
   LockKeyhole,
   Mail,
   ShieldCheck,
@@ -12,6 +15,7 @@ import {
 
 const LoginPage = () => {
   const { mutate: login, isPending } = useLogin();
+  const [showPassword, setShowPassword] = useState(false);
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -141,7 +145,7 @@ const LoginPage = () => {
                   <input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
                     required
                     disabled={isPending}
@@ -151,6 +155,15 @@ const LoginPage = () => {
                     placeholder="أدخل كلمة المرور"
                     className="h-[50px] w-full min-w-0 rounded-[13px] border border-[#dce5ef] bg-[#f9fbfd] px-11 text-13 text-[#17253d] outline-none transition placeholder:text-slate-400 focus:border-primary-500 focus:bg-white focus:ring-4 focus:ring-primary-500/10 disabled:cursor-not-allowed disabled:opacity-70"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((isVisible) => !isVisible)}
+                    aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
+                    aria-pressed={showPassword}
+                    className="absolute left-3.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-slate-500 transition hover:bg-primary-50 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                  >
+                    {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+                  </button>
                 </div>
               </div>
 

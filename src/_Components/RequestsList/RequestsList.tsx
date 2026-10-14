@@ -14,7 +14,6 @@ import {
   Route,
   Search,
   Users,
-  X,
 } from 'lucide-react';
 import { useRealtimeRequests } from '../../Hooks/useRealtimeRequest';
 import { Request } from '@/interface';
@@ -74,16 +73,6 @@ const RequestsList = ({ Requests }: { Requests: Request[] }) => {
 
   const selectedRequest =
     visibleRequests.find((request) => request.id === selectedId) ?? null;
-
-  const selectNextRequest = () => {
-    if (!selectedRequest) return;
-    const currentIndex = visibleRequests.findIndex(
-      (request) => request.id === selectedRequest.id,
-    );
-    const nextRequest =
-      visibleRequests[currentIndex + 1] ?? visibleRequests[currentIndex - 1];
-    setSelectedId(nextRequest?.id ?? null);
-  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -179,7 +168,6 @@ const RequestsList = ({ Requests }: { Requests: Request[] }) => {
               request={selectedRequest}
               isPending={isPending}
               onReceive={() => receiveRequest(selectedRequest.id)}
-              onSkip={selectNextRequest}
             />
           : <div className="flex min-h-[500px] items-center justify-center rounded-2xl border border-secondary-200 bg-white p-6 text-center shadow-sm">
               <div>
@@ -279,12 +267,10 @@ const RequestDetails = ({
   request,
   isPending,
   onReceive,
-  onSkip,
 }: {
   request: Request;
   isPending: boolean;
   onReceive: () => void;
-  onSkip: () => void;
 }) => {
   const whatsappPhone = request.phone.replace(/\D/g, '');
   const hasRoute = request.departure_airport || request.arrival_airport;
@@ -356,20 +342,12 @@ const RequestDetails = ({
         </p>
       </div>
 
-      <div className="mt-auto flex flex-col-reverse gap-3 pt-5 sm:flex-row">
-        <button
-          type="button"
-          onClick={onSkip}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-secondary-50 px-5 py-3 text-14 font-semibold text-secondary-500 transition hover:bg-secondary-100"
-        >
-          <X className="h-4 w-4" />
-          تخطي مؤقتًا
-        </button>
+      <div className="mt-auto pt-5">
         <button
           type="button"
           onClick={onReceive}
           disabled={request.is_read || isPending}
-          className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 text-14 font-semibold text-white transition disabled:cursor-not-allowed ${
+          className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-14 font-semibold text-white transition disabled:cursor-not-allowed ${
             request.is_read ?
               'bg-green-600'
             : 'bg-primary-500 hover:bg-primary-600 disabled:opacity-60'
