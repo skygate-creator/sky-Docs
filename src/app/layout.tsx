@@ -5,9 +5,6 @@ import ReactQueryProvider from '@/_Components/ReactQueryProvider/ReactQueryProvi
 import { Toaster } from 'react-hot-toast';
 import NavServer from '@/_Components/Navbar/NavServer';
 import getUserProfile from '../../lib/Helper/getUserProfile';
-import AsideEmployee from '@/_Components/AsideEmployee/AsideEmployee';
-import AsideAdmin from '@/_Components/AsideAdmin/AsideAdmin';
-import AsdideDispatcher from '@/_Components/AsideDispatcher/AsideDispatcher';
 import { RequestsProvider } from '@/context/RequestsContext.tsx';
 
 const cairoFont = Cairo({
@@ -31,34 +28,23 @@ export default async function RootLayout({
     <html
       dir="rtl"
       lang="ar"
-      className={`${cairoFont.variable} max-w-[1300px] px-3 ${!user ? 'overflow-hidden' : 'mx-auto'}`}
+      className={`${cairoFont.variable} ${!user ? 'overflow-hidden' : ''}`}
     >
       <body className={cairoFont.className}>
         <ReactQueryProvider>
           <Toaster />
           <main
-            className={`${!user ? '' : 'grid md:grid-cols-[20%_80%] grid-cols-1'} `}
+            className={!user ? '' : 'min-h-screen bg-[#eef3f8]'}
           >
-            <div className={`${!user ? 'hidden' : ''} aside`}>
-              <div
-                className={`aside_employee ${user?.role === 'admin' || user?.role === 'dispatcher' ? 'hidden' : ''}`}
-              >
-                <AsideEmployee />
-              </div>
-              <div
-                className={`aside_admin ${user?.role === 'employee' || user?.role === 'dispatcher' ? 'hidden' : ''}`}
-              >
-                <AsideAdmin />
-              </div>
-              <div
-                className={`aside_dispatcher ${user?.role === 'admin' || user?.role === 'employee' ? 'hidden' : ''}`}
-              >
-                <AsdideDispatcher />
-              </div>
-            </div>
-            <div className="resurt">
+            <div className={!user ? '' : 'min-w-0 w-full'}>
               <NavServer />
-              <RequestsProvider>{children}</RequestsProvider>
+              <RequestsProvider>
+                <div
+                  className={!user ? '' : 'mx-auto w-full max-w-[1300px]'}
+                >
+                  {children}
+                </div>
+              </RequestsProvider>
             </div>
           </main>
         </ReactQueryProvider>

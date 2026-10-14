@@ -24,17 +24,7 @@ export const useLogin = () => {
 
     if (authError) throw authError;
 
-    // Update last login
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({
-        last_login: authData.user.last_sign_in_at,
-      })
-      .eq('id', authData.user.id);
-
-    if (updateError) throw updateError;
-
-    // Get profile
+    // Check the profile before writing anything so suspended accounts cannot update it.
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('*')
@@ -48,6 +38,16 @@ export const useLogin = () => {
       await supabase.auth.signOut();
       throw new Error('تم تعطيل هذا الحساب، يرجى التواصل مع الإدارة.');
     }
+
+    // Update last login for active accounts only.
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        last_login: authData.user.last_sign_in_at,
+      })
+      .eq('id', authData.user.id);
+
+    if (updateError) throw updateError;
 
     return profile;
   };

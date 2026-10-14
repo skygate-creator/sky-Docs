@@ -1,84 +1,117 @@
-// components/AdminRecintClients.tsx
 import { RecentClient } from '@/interface';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import { formatMoney } from '@/Utils/currency';
+import { formatDate } from '@/Utils/date';
+import { getInitials } from '@/Utils/names';
 
 const avatarColors = [
-  { bg: 'bg-primary-100', text: 'text-primary-600' },
-  { bg: 'bg-tertiary-100', text: 'text-tertiary-500' },
-  { bg: 'bg-secondary-100', text: 'text-secondary-600' },
+  'bg-primary-100 text-primary-700',
+  'bg-tertiary-100 text-tertiary-600',
+  'bg-purple-100 text-purple-700',
+  'bg-green-100 text-green-700',
 ];
-
-const getInitials = (name: string) => {
-  const parts = name.trim().split(' ');
-  return parts.length > 1 ? `${parts[0][0]} ${parts[1][0]}` : parts[0][0];
-};
-
-const formatPrice = (price: number, currency: string) => {
-  return `${price.toLocaleString('en-US')} ${currency}`;
-};
 
 const AdminRecintClients = ({ clients }: { clients: RecentClient[] }) => {
   return (
-    <div className="w-full bg-white mb-5">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-neutral-200 py-2">
-        <h3 className="font-bold text-secondary-900">آخر العملاء المضافون</h3>
+    <section className="overflow-hidden rounded-2xl border border-secondary-200 bg-white shadow-sm">
+      <div className="flex items-center justify-between gap-3 border-b border-secondary-100 px-5 py-4">
+        <div>
+          <h2 className="text-16 font-bold text-secondary-900">
+            آخر العملاء المضافين
+          </h2>
+          <p className="mt-1 text-12 text-secondary-400">
+            آخر تحديثات فريق المبيعات
+          </p>
+        </div>
+        <span className="rounded-lg bg-primary-50 px-3 py-1.5 text-11 font-semibold text-primary-700">
+          آخر {clients.length} عملاء
+        </span>
       </div>
 
-      {/* Rows */}
-      <div className="divide-y divide-neutral-200 rounded-lg border-2 border-secondary-200">
-        {clients.map((client, index) => {
-          const color = avatarColors[index % avatarColors.length];
-          return (
-            <div
-              key={client.id}
-              className="grid grid-cols-[1fr_1fr_1fr_auto] items-start gap-4 px-5 py-4"
-            >
-              {/* 1. Client info (rightmost) */}
-              <div className="flex items-center gap-3 justify-self-start ">
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${color.bg} ${color.text} text-sm font-bold`}
+      {clients.length > 0 ?
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[700px] text-right">
+            <thead className="bg-secondary-50">
+              <tr>
+                <th className="px-5 py-3 text-11 font-semibold text-secondary-400">
+                  العميل
+                </th>
+                <th className="px-5 py-3 text-11 font-semibold text-secondary-400">
+                  الموظف المسؤول
+                </th>
+                <th className="px-5 py-3 text-11 font-semibold text-secondary-400">
+                  قيمة الرحلة
+                </th>
+                <th className="px-5 py-3 text-11 font-semibold text-secondary-400">
+                  تاريخ الإضافة
+                </th>
+                <th className="px-5 py-3">
+                  <span className="sr-only">عرض التفاصيل</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-secondary-100">
+              {clients.map((client, index) => (
+                <tr
+                  key={client.id}
+                  className="transition-colors hover:bg-primary-50/40"
                 >
-                  {getInitials(client.customer_name)}
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-secondary-900">
-                    {client.customer_name}
-                  </p>
-                  <p className="text-sm text-secondary-600">{client.phone}</p>
-                </div>
-              </div>
-
-              {/* 2. Employee name */}
-              <div className="text-right">
-                <p className="text-sm text-neutral-600">اسم الموظف</p>
-                <p className="font-bold text-primary-600">
-                  {client.profiles?.name ?? '—'}
-                </p>
-              </div>
-
-              {/* 3. Trip price */}
-              <div className="text-left">
-                <p className="text-sm text-neutral-600">إجمالي الرحلة</p>
-                <p className="font-bold text-primary-600">
-                  {formatPrice(client.trip_price, client.currency)}
-                </p>
-              </div>
-
-              {/* 4. Action button (leftmost) */}
-              <Link
-                href={`/admin/employee/clientInfo/${client.id}`}
-                className="flex items-center gap-1 rounded-full border border-neutral-300 px-4 py-1.5 text-sm text-secondary-700 hover:bg-neutral-200 w-fit"
-              >
-                عرض التفاصيل
-                <ChevronLeft className="h-4 w-4" />
-              </Link>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+                  <td className="px-5 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-11 font-bold ${
+                          avatarColors[index % avatarColors.length]
+                        }`}
+                      >
+                        {getInitials(client.customer_name, { fallback: '—' })}
+                      </span>
+                      <div>
+                        <p className="text-13 font-bold text-secondary-900">
+                          {client.customer_name}
+                        </p>
+                        <p
+                          className="mt-0.5 text-11 text-secondary-400"
+                          dir="ltr"
+                        >
+                          {client.phone}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-5 py-3.5 text-12 font-medium text-secondary-600">
+                    {client.profiles?.name ?? '—'}
+                  </td>
+                  <td className="px-5 py-3.5 text-12 font-bold text-secondary-900">
+                    {formatMoney(client.trip_price, client.currency)}
+                  </td>
+                  <td className="px-5 py-3.5 text-11 text-secondary-400">
+                    {formatDate(client.created_at)}
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <Link
+                      href={`/admin/employee/clientInfo/${client.id}`}
+                      aria-label={`عرض تفاصيل ${client.customer_name}`}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-600 transition hover:bg-primary-100"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      : <div className="py-14 text-center">
+          <p className="text-14 font-semibold text-secondary-700">
+            لا يوجد عملاء حتى الآن
+          </p>
+          <p className="mt-1 text-12 text-secondary-400">
+            سيظهر أحدث العملاء هنا
+          </p>
+        </div>
+      }
+    </section>
   );
 };
 

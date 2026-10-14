@@ -1,7 +1,7 @@
-import React from 'react';
+import { redirect } from 'next/navigation';
 
 const dispatcher = () => {
-  return <div className="p-5"></div>;
+  redirect('/dispatcher/newRequest');
 };
 
 export default dispatcher;

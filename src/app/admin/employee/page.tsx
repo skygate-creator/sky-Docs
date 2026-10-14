@@ -1,22 +1,23 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import getAllUsers from '../../../../lib/Helper/getAllUsers';
-import EmployeeCard from '@/_Components/Admin_components/EmployeeCard/EmployeeCard';
 import AllEmployee from '@/_Components/Admin_components/AllEmployee/AllEmployee';
 
 const Employee = async () => {
   const users = await getAllUsers();
 
   return (
-    <div className="p-5 flex flex-col gap-5">
-      <div className="title flex flex-col gap-2">
-        <h2 className="text-24 font-bold text-primary-500">الموظفين</h2>
-        <p className="text-secondary-400 font-medium text-16">
-          استعرض جميع الموظفين وابحث عن أي موظف بسهولة
+    <div className="flex flex-col gap-3 p-3">
+      <section className="rounded-2xl border border-primary-100 bg-gradient-to-l from-primary-50 to-white p-5">
+        <p className="text-13 font-semibold text-primary-600">إدارة الفريق</p>
+        <h1 className="mt-1 text-24 font-bold text-secondary-950">
+          دليل الموظفين
+        </h1>
+        <p className="mt-1 text-14 text-secondary-400">
+          تابع حسابات الموظفين وأداء كل موظف وتحكم في حالة الحساب
         </p>
-      </div>
-      <Suspense fallback={<span className="loader"></span>}>
-        <AllEmployee users={users} />
-      </Suspense>
+      </section>
+
+      <AllEmployee users={users} />
     </div>
   );
 };

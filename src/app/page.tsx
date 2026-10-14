@@ -7,6 +7,9 @@ const Home = async () => {
   if (user.role === 'admin') {
     redirect('/admin/dashboard');
   }
+  if (user.role === 'dispatcher') {
+    redirect('/dispatcher/newRequest');
+  }
   redirect('/employee/dashboard');
 };
 

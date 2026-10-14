@@ -2,6 +2,8 @@ import Image from 'next/image';
 import { getIn } from 'formik';
 import { useRef, useState } from 'react';
 import { X } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { validateAvatarFile } from '@/Utils/fileValidation';
 
 interface FileInputProps {
   label: string;
@@ -26,6 +28,15 @@ const FileInput = ({ label, name, formik, setIsOpen }: FileInputProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
+
+    if (selectedFile) {
+      const validationError = validateAvatarFile(selectedFile);
+      if (validationError) {
+        toast.error(validationError, { position: 'top-center' });
+        e.target.value = '';
+        return;
+      }
+    }
 
     formik.setFieldValue(name, selectedFile);
 
@@ -64,6 +75,7 @@ const FileInput = ({ label, name, formik, setIsOpen }: FileInputProps) => {
       <input
         ref={inputRef}
         type="file"
+        accept="image/jpeg,image/png,image/webp"
         className="hidden"
         onChange={handleChange}
       />

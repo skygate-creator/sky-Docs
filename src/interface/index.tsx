@@ -61,7 +61,7 @@ export interface Profile {
     name: string;
   };
   avatar_url: string | null;
-  role: 'admin' | 'employee';
+  role: 'admin' | 'employee' | 'dispatcher';
   job_title: string;
   is_active: boolean;
   last_login?: string | null;
@@ -69,9 +69,14 @@ export interface Profile {
   updated_at: string;
 }
 
+export interface EmployeeDirectoryItem extends Profile {
+  clients_count: number;
+  requests_count: number;
+}
+
 export interface Request {
   id?: string;
-  dispatcher_id?: string;
+  dispatcher_id?: string | null;
   employee_id: string;
   phone: string;
   destination: string;

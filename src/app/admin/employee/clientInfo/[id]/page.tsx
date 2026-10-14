@@ -1,6 +1,4 @@
-import React from 'react';
 import getCustomerById from '../../../../../../lib/Helper/getCustomerById';
-import { ClientDetails } from '@/interface';
 import CustomerInfo from '@/_Components/CustomerInfo/CustomerInfo';
 import getClientDocs from '../../../../../../lib/Helper/getClientDocs';
 import getClientDocumentsSignedUrls from '../../../../../../lib/Helper/getClientDocumentUrls';
@@ -16,16 +14,23 @@ import {
   Bus,
   MessageSquareText,
 } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
 const ClientInfo = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
-  const customerDetails: ClientDetails = await getCustomerById(id);
-  const clientDocs = await getClientDocs(id);
+  const [customerDetails, clientDocs] = await Promise.all([
+    getCustomerById(id),
+    getClientDocs(id),
+  ]);
+
+  if (!customerDetails) notFound();
+
   const data = await getClientDocumentsSignedUrls(clientDocs[0]);
+  const documentsCount = Object.values(data).filter(Boolean).length;
 
   return (
-    <section className="flex flex-col gap-5 p-5">
+    <section className="flex flex-col gap-5 p-3">
       {/* Header */}
       <div className="flex flex-col gap-2">
         <h3 className="text-24 font-bold text-primary-500">
@@ -37,7 +42,7 @@ const ClientInfo = async ({ params }: { params: Promise<{ id: string }> }) => {
         </p>
       </div>
 
-      <CustomerInfo client={customerDetails} />
+      <CustomerInfo client={customerDetails} documentsCount={documentsCount} />
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         <ReadFileCard
@@ -97,8 +102,7 @@ const ClientInfo = async ({ params }: { params: Promise<{ id: string }> }) => {
         />
       </div>
 
-      {clientDocs[0]?.notes && (
-        <div className="flex flex-col">
+      <div className="flex flex-col">
           <div className="flex items-center gap-2 rounded-t-2xl bg-neutral-300 p-2">
             <MessageSquareText className="h-5 w-5 text-primary-400" />
 
@@ -109,11 +113,11 @@ const ClientInfo = async ({ params }: { params: Promise<{ id: string }> }) => {
 
           <div className="h-40 w-full rounded-b-2xl border border-neutral-300 bg-white p-4">
             <p className="text-14 font-bold text-secondary-900">
-              {clientDocs[0].notes}
+              {clientDocs[0]?.notes?.trim() ||
+                'لا توجد ملاحظات مضافة لهذا العميل.'}
             </p>
           </div>
-        </div>
-      )}
+      </div>
     </section>
   );
 };

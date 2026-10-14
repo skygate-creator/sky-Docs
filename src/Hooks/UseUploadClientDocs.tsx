@@ -6,6 +6,7 @@ import { createClient } from '../../lib/supabase/client';
 import { ClientDocsFormValues } from '@/interface';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { getSafeFileName, validatePdfFile } from '@/Utils/fileValidation';
 
 const BUCKET_NAME = 'documents'; // غيّرها لاسم الـ bucket الفعلي عندك
 
@@ -35,6 +36,15 @@ export const useUploadClientDocs = () => {
   }: UploadClientDocsParams) => {
     const supabase = createClient();
 
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user || user.id !== employeeId) {
+      throw new Error('تعذر التحقق من هوية الموظف');
+    }
+
     const uploadedPaths: Record<FileField, string | null> = {
       flight_path: null,
       voucher_path: null,
@@ -46,24 +56,31 @@ export const useUploadClientDocs = () => {
       passport_path: null,
     };
 
-    // 1. ارفع كل ملف موجود على الـ bucket جوه فولدر الموظف
-    for (const field of fileFields) {
-      const file = values[field];
-      if (!file) continue;
+    const storage = supabase.storage.from(BUCKET_NAME);
+    const newlyUploadedPaths: string[] = [];
 
-      const filePath = `${employeeId}/${values.client_id}/${field}-${file.name}`;
+    try {
+      for (const field of fileFields) {
+        const file = values[field];
+        if (!file) continue;
 
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET_NAME)
-        .upload(filePath, file, {
+        const validationError = validatePdfFile(file);
+        if (validationError) throw new Error(validationError);
+
+        const filePath = `${user.id}/${values.client_id}/${field}-${crypto.randomUUID()}-${getSafeFileName(file.name)}`;
+        const { error: uploadError } = await storage.upload(filePath, file, {
           cacheControl: '3600',
+          contentType: 'application/pdf',
         });
 
-      if (uploadError) throw uploadError;
+        if (uploadError) throw uploadError;
 
-      // الباكت برايفت، فبنخزن الـ path بس مش رابط
-      // وبنولد signed URL وقت العرض بس (useSignedFileUrl)
-      uploadedPaths[field] = filePath;
+        newlyUploadedPaths.push(filePath);
+        uploadedPaths[field] = filePath;
+      }
+    } catch (error) {
+      if (newlyUploadedPaths.length > 0) await storage.remove(newlyUploadedPaths);
+      throw error;
     }
 
     // 2. سجّل الـ paths في جدول documents
@@ -83,7 +100,10 @@ export const useUploadClientDocs = () => {
       { onConflict: 'client_id' },
     );
 
-    if (dbError) throw dbError;
+    if (dbError) {
+      if (newlyUploadedPaths.length > 0) await storage.remove(newlyUploadedPaths);
+      throw dbError;
+    }
 
     return uploadedPaths;
   };

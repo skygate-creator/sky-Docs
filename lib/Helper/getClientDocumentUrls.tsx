@@ -28,7 +28,7 @@ interface SignedDocumentUrls {
 }
 
 const getClientDocumentsSignedUrls = async (
-  documents: DocumentPaths,
+  documents?: DocumentPaths | null,
 ): Promise<SignedDocumentUrls> => {
   const supabase = await createClient();
 
@@ -53,6 +53,8 @@ const getClientDocumentsSignedUrls = async (
     supplier_info_path: null,
     customer_transfers_path: null,
   };
+
+  if (!documents) return result;
 
   await Promise.all(
     fields.map(async (field) => {

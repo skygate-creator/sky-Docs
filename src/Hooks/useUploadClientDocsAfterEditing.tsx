@@ -6,6 +6,7 @@ import { createClient } from '../../lib/supabase/client';
 import { ClientDocsFormValues } from '@/interface';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { getSafeFileName, validatePdfFile } from '@/Utils/fileValidation';
 
 const BUCKET_NAME = 'documents';
 
@@ -35,13 +36,24 @@ export const useUploadClientDocsAfterEditing = () => {
     employeeId,
   }: UploadClientDocsParams) => {
     const supabase = createClient();
+    const storage = supabase.storage.from(BUCKET_NAME);
 
-    // 1. هات الصف الحالي (لو موجود) عشان تحافظ على القيم القديمة
-    const { data: existingDoc } = await supabase
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user || user.id !== employeeId) {
+      throw new Error('تعذر التحقق من هوية الموظف');
+    }
+
+    const { data: existingDoc, error: existingDocError } = await supabase
       .from('documents')
       .select('*')
       .eq('client_id', values.client_id)
       .maybeSingle();
+
+    if (existingDocError) throw existingDocError;
 
     const uploadedPaths: Record<FileField, string | null> = {
       flight_path: existingDoc?.flight_path ?? null,
@@ -54,25 +66,40 @@ export const useUploadClientDocsAfterEditing = () => {
       passport_path: existingDoc?.passport_path ?? null,
     };
 
-    // 2. ارفع بس الملفات الجديدة اللي المستخدم اختارها فعلاً
-    for (const field of fileFields) {
-      const file = values[field];
-      if (!file) continue; // مفيش ملف جديد → سيب القيمة القديمة زي ما هي
+    const newlyUploadedPaths: string[] = [];
+    const oldPathsToRemove: string[] = [];
 
-      const filePath = `${employeeId}/${values.client_id}/${field}-${file.name}`;
+    try {
+      for (const field of fileFields) {
+        const file = values[field];
+        if (!file) continue;
 
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET_NAME)
-        .upload(filePath, file, {
+        const validationError = validatePdfFile(file);
+        if (validationError) throw new Error(validationError);
+
+        const filePath = `${user.id}/${values.client_id}/${field}-${crypto.randomUUID()}-${getSafeFileName(file.name)}`;
+
+        const { error: uploadError } = await storage.upload(filePath, file, {
           cacheControl: '3600',
+          contentType: 'application/pdf',
         });
 
-      if (uploadError) throw uploadError;
+        if (uploadError) throw uploadError;
 
-      uploadedPaths[field] = filePath; // استبدل القديم بالجديد
+        newlyUploadedPaths.push(filePath);
+
+        const oldPath = uploadedPaths[field];
+        if (oldPath) oldPathsToRemove.push(oldPath);
+
+        uploadedPaths[field] = filePath;
+      }
+    } catch (error) {
+      if (newlyUploadedPaths.length > 0) {
+        await storage.remove(newlyUploadedPaths);
+      }
+      throw error;
     }
 
-    // 3. سجّل في جدول documents (القديم + الجديد مدموجين)
     const { error: dbError } = await supabase.from('documents').upsert(
       {
         client_id: values.client_id,
@@ -89,7 +116,24 @@ export const useUploadClientDocsAfterEditing = () => {
       { onConflict: 'client_id' },
     );
 
-    if (dbError) throw dbError;
+    if (dbError) {
+      if (newlyUploadedPaths.length > 0) {
+        await storage.remove(newlyUploadedPaths);
+      }
+      throw dbError;
+    }
+
+    if (oldPathsToRemove.length > 0) {
+      const { error: removeError } = await storage.remove([
+        ...new Set(oldPathsToRemove),
+      ]);
+
+      if (removeError) {
+        throw new Error(
+          'تم حفظ الملفات الجديدة، لكن تعذر حذف بعض الملفات القديمة من التخزين.',
+        );
+      }
+    }
 
     return uploadedPaths;
   };

@@ -30,10 +30,11 @@ const useAddRequest = () => {
     mutationKey: ['addrequest'],
     mutationFn: addClient,
 
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success('تم إضافة الطلب بنجاح', {
         position: 'top-center',
       });
+      router.refresh();
     },
 
     onError: (error: any) => {

@@ -1,12 +1,13 @@
-import React from 'react';
 import { createClient } from '../supabase/server';
-const getUserById = async (id: string) => {
+import { Profile } from '@/interface';
+
+const getUserById = async (id: string): Promise<Profile | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', id)
-    .single();
+    .maybeSingle();
 
   if (error) throw error;
   return data;

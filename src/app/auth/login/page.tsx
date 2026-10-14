@@ -18,7 +18,7 @@ const login = () => {
   });
 
   return (
-    <section className="w-screen h-screen flex items-center justify-center px-5">
+    <section className="flex h-screen w-full items-center justify-center p-3">
       <div className="grid sm:grid-cols-2 gap-2 bg-white rounded-2xl shadow-lg max-w-[1100px] mx-auto">
         <div className="text flex flex-col gap-3 p-5 ">
           <div className="flex flex-col gap-1 ">

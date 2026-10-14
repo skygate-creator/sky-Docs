@@ -1,7 +1,7 @@
 'use client';
 import { SquarePlus } from 'lucide-react';
 import { useFormik } from 'formik';
-import { Request, UserDispatcher } from '@/interface';
+import { Request } from '@/interface';
 import Input from '@/_Components/Input/Input';
 import { useMemo } from 'react';
 import DropList from '@/_Components/DropList/DropList';
@@ -9,7 +9,12 @@ import TextArea from '@/_Components/TextArea/TextArea';
 import useAddRequest from '@/Hooks/useAddRequest';
 import { dispatcherRequestSchema } from '@/validation/validation';
 
-const DispatcherAddRequest = ({ users }: { users: any }) => {
+interface DispatcherUserOption {
+  value: string;
+  label: string;
+}
+
+const DispatcherAddRequest = ({ users }: { users: DispatcherUserOption[] }) => {
   const { mutate: addRequest, isPending } = useAddRequest();
   const trip_Type = useMemo(
     () => [
@@ -26,6 +31,7 @@ const DispatcherAddRequest = ({ users }: { users: any }) => {
       { value: 'تيك توك', label: 'تيك توك' },
       { value: 'واتساب', label: 'واتساب' },
       { value: 'سناب شات', label: 'سناب شات' },
+      { value: 'الويبسايت', label: 'الويبسايت' },
     ],
     [],
   );
@@ -53,9 +59,9 @@ const DispatcherAddRequest = ({ users }: { users: any }) => {
         <h3 className=" text-18 font-medium ">إضافة ريكويست جديد</h3>
       </div>
       <form onSubmit={formik.handleSubmit}>
-        <div className="form bg-white p-5 border border-secondary-200 grid grid-cols-2  gap-5">
+        <div className="form grid grid-cols-1 gap-4 border border-secondary-200 bg-white p-3 sm:p-5 md:grid-cols-2">
           <Input
-            type="number"
+            type="tel"
             label="رقم هاتف العميل"
             name="phone"
             formik={formik}
@@ -81,7 +87,7 @@ const DispatcherAddRequest = ({ users }: { users: any }) => {
             placeholder="أختر مصدر العميل"
             onSelect={(e) => formik.setFieldValue('lead_source', e)}
           />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Input
               label="مطار المغادرة"
               name="departure_airport"
@@ -117,7 +123,7 @@ const DispatcherAddRequest = ({ users }: { users: any }) => {
           <button
             type="submit"
             disabled={isPending}
-            className="bg-primary-500 p-4 rounded-lg col-span-2 hover:bg-primary-400 duration-200 text-white"
+            className="rounded-lg bg-primary-500 p-4 text-white duration-200 hover:bg-primary-400 md:col-span-2"
           >
             {isPending ?
               <span className="loader"></span>

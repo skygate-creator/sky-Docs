@@ -3,6 +3,8 @@
 
 import { LucideIcon, X, FileText, Download, Eye, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { validatePdfFile } from '@/Utils/fileValidation';
 
 interface FileUploadCardProps {
   icon: LucideIcon;
@@ -20,8 +22,10 @@ const FileUploadCard = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
-    if (selected && selected.type !== 'application/pdf') {
-      alert('من فضلك اختر ملف PDF فقط');
+    const validationError = selected ? validatePdfFile(selected) : null;
+    if (validationError) {
+      toast.error(validationError, { position: 'top-center' });
+      e.target.value = '';
       return;
     }
     setFile(selected);

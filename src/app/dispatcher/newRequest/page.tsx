@@ -1,9 +1,14 @@
 import DispatcherAddRequest from '@/Utils/DispatcherAddRequest';
 
 import getUsersToDispatcher from '../../../../lib/Helper/getUsersToDispatcher';
+import getDispatcherEmployeeRequestCounts from '../../../../lib/Helper/getDispatcherEmployeeRequestCounts';
+import DispatcherEmployeeRequestsTable from '@/_Components/DispatcherEmployeeRequestsTable/DispatcherEmployeeRequestsTable';
 
 const newRequest = async () => {
-  const users = await getUsersToDispatcher(); // [{ id, name }, ...]
+  const [users, employeeRequestCounts] = await Promise.all([
+    getUsersToDispatcher(),
+    getDispatcherEmployeeRequestCounts(),
+  ]);
 
   const usersOptions = users.map((user) => ({
     value: user.id,
@@ -11,7 +16,7 @@ const newRequest = async () => {
   }));
 
   return (
-    <section className="p-5 flex flex-col gap-5">
+    <section className="flex flex-col gap-5 p-3">
       <div className="title flex flex-col gap-2">
         <h2 className="text-24 font-bold text-primary-500">
           لوحة إدارة الريكويستات
@@ -21,6 +26,7 @@ const newRequest = async () => {
         </p>
       </div>
       <DispatcherAddRequest users={usersOptions} />
+      <DispatcherEmployeeRequestsTable employees={employeeRequestCounts} />
     </section>
   );
 };

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createClient } from '../../lib/supabase/client';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { validateAvatarFile } from '@/Utils/fileValidation';
 
 interface UploadAvatarParams {
   file: File;
@@ -20,14 +21,29 @@ const useUploadAvatar = () => {
   }: UploadAvatarParams) => {
     const supabase = createClient();
 
-    // 1️⃣ نطلع الامتداد الحقيقي
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${userId}.${fileExt}`;
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user || user.id !== userId || bucketName !== 'usersImages') {
+      throw new Error('تعذر التحقق من هوية المستخدم');
+    }
+
+    const validationError = validateAvatarFile(file);
+    if (validationError) throw new Error(validationError);
+
+    const fileExtByMime: Record<string, string> = {
+      'image/jpeg': 'jpeg',
+      'image/png': 'png',
+      'image/webp': 'webp',
+    };
+    const fileName = `${user.id}.${fileExtByMime[file.type]}`;
 
     // 2️⃣ نرفع الصورة
     const { error: uploadError } = await supabase.storage
       .from(bucketName)
-      .upload(fileName, file, { upsert: true });
+      .upload(fileName, file, { upsert: true, contentType: file.type });
 
     // نجلب الصورة
     if (uploadError) throw uploadError;
@@ -46,6 +62,17 @@ const useUploadAvatar = () => {
       .eq('id', userId);
 
     if (profileError) throw profileError;
+
+    const staleAvatarPaths = ['jpg', 'jpeg', 'png', 'webp']
+      .map((extension) => `${user.id}.${extension}`)
+      .filter((path) => path !== fileName);
+    const { error: cleanupError } = await supabase.storage
+      .from(bucketName)
+      .remove(staleAvatarPaths);
+
+    if (cleanupError) {
+      throw new Error('تم رفع الصورة الجديدة، لكن تعذر حذف الصورة القديمة.');
+    }
 
     return `${imgurl.publicUrl}?t=${Date.now()}`;
   };
