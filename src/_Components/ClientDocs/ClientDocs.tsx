@@ -59,7 +59,7 @@ const ClientDocs = ({
       </div>
 
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-5">
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2 md:gap-5 xl:grid-cols-3">
           <FileUploadCard
             icon={Plane}
             name="تذكرة الطيران الدولي"
@@ -93,7 +93,7 @@ const ClientDocs = ({
           />
 
           {hasPassport ? (
-            <div className="flex min-h-40 flex-col items-center justify-center rounded-2xl border border-green-200 bg-green-50 p-5 text-center text-green-700">
+            <div className="flex min-h-[168px] w-full flex-col items-center justify-center rounded-2xl border border-green-200 bg-green-50 p-5 text-center text-green-700">
               <BadgeCheck className="h-7 w-7" />
               <strong className="mt-3 text-13">جواز السفر محفوظ</strong>
               <p className="mt-1 text-11">سيتم ربطه بهذه الرحلة تلقائيًا.</p>

@@ -57,7 +57,7 @@ const FileUploadCard = ({
   return (
     <div
       dir="rtl"
-      className="w-full max-w-xs rounded-2xl border border-neutral-300 bg-white p-4"
+      className="flex min-h-[168px] w-full flex-col rounded-2xl border border-neutral-300 bg-white p-4"
     >
       {/* Header: icon + status badge */}
       <div className="mb-4 flex items-center justify-between">
@@ -110,7 +110,7 @@ const FileUploadCard = ({
 
       {/* Actions */}
       {file && (
-        <div className="flex gap-2">
+        <div className="mt-auto flex gap-2">
           <button
             type="button"
             onClick={handlePreview}

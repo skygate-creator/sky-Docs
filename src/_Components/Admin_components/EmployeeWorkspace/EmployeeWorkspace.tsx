@@ -52,6 +52,7 @@ const EmployeeWorkspace = ({
         (client) =>
           !query ||
           client.customer_name.toLowerCase().includes(query) ||
+          client.customer_code.toLowerCase().includes(query) ||
           client.phone.toLowerCase().includes(query),
       )
       .sort((first, second) => compareDates(first.created_at, second.created_at, sortOrder));
@@ -133,7 +134,7 @@ const EmployeeWorkspace = ({
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder={
                   activeTab === 'clients' ?
-                    'ابحث باسم العميل أو رقم الهاتف...'
+                    'ابحث باسم العميل أو الهاتف أو الكود...'
                   : 'ابحث بالوجهة أو الهاتف أو نوع الرحلة...'
                 }
                 className="w-full rounded-xl border border-secondary-200 bg-secondary-50 py-2.5 pl-4 pr-10 text-13 text-secondary-900 outline-none transition placeholder:text-secondary-300 focus:border-primary-400 focus:bg-white focus:ring-4 focus:ring-primary-50"
@@ -262,7 +263,7 @@ const ClientsList = ({ clients }: { clients: RecentClient[] }) => {
     <div className="px-4">
       <div className="hidden min-h-11 grid-cols-[minmax(220px,1.3fr)_minmax(120px,.7fr)_minmax(130px,.75fr)_100px] items-center gap-3 bg-secondary-50 px-3 text-10 font-semibold text-secondary-400 md:grid">
         <span>العميل</span>
-        <span>قيمة الرحلة</span>
+        <span>آخر رحلة</span>
         <span>تاريخ الإضافة</span>
         <span className="text-center">الإجراء</span>
       </div>
@@ -282,6 +283,11 @@ const ClientsList = ({ clients }: { clients: RecentClient[] }) => {
                 </p>
                 <p className="mt-1 truncate text-11 text-secondary-400" dir="ltr">
                   {client.phone}
+                </p>
+                <p className="mt-1 text-10 font-semibold text-primary-500">
+                  {client.trips_count === 1
+                    ? 'رحلة واحدة'
+                    : `${client.trips_count} رحلات`}
                 </p>
               </div>
             </div>
