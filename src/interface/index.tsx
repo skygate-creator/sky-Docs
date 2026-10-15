@@ -13,15 +13,36 @@ export interface AddClientForm {
   currency: string;
 }
 
+export interface Trip {
+  id: string;
+  customer_id: string;
+  employee_id: string;
+  trip_price: number;
+  currency: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CustomerFile {
+  id?: string;
+  customer_id?: string;
+  passport_path: string | null;
+}
+
 export interface RecentClient {
   id?: string;
   name?: string;
   customer_name: string;
+  customer_code: string;
   employee_id?: string;
   phone: string;
   trip_price: number;
   avatar_url?: string;
   currency: string;
+  trips: Trip[];
+  trips_count: number;
+  latest_trip_at?: string;
+  customer_files?: CustomerFile | null;
   profiles?: {
     name: string;
   };
@@ -33,15 +54,21 @@ export interface ClientDetails {
   id: string;
   employee_id: string;
   customer_name: string;
+  customer_code: string;
   phone: string;
   trip_price: number;
   currency: string;
+  trips: Trip[];
+  trips_count: number;
+  latest_trip_at?: string;
+  customer_files?: CustomerFile | null;
   created_at: string;
   updated_at: string;
 }
 
 export interface ClientDocsFormValues {
-  client_id: string;
+  customer_id: string;
+  trip_id: string;
   flight_path: File | null;
   voucher_path: File | null;
   car_path: File | null;
@@ -51,6 +78,19 @@ export interface ClientDocsFormValues {
   supplier_info_path: File | null;
   customer_transfers_path: File | null;
   notes: string;
+}
+
+export interface TripFiles {
+  id?: string;
+  trip_id?: string;
+  flight_path: string | null;
+  voucher_path: string | null;
+  car_path: string | null;
+  package_path: string | null;
+  inside_flight_path: string | null;
+  supplier_info_path: string | null;
+  customer_transfers_path: string | null;
+  notes: string | null;
 }
 
 export interface Profile {

@@ -22,6 +22,27 @@ export const clientValidationSchema = Yup.object({
   currency: Yup.string().required('العملة مطلوبة'),
 });
 
+export const customerValidationSchema = Yup.object({
+  customer_name: Yup.string()
+    .trim()
+    .min(3, 'الاسم لازم يكون 3 أحرف على الأقل')
+    .max(100, 'الاسم طويل جداً')
+    .required('اسم العميل مطلوب'),
+  phone: Yup.string()
+    .trim()
+    .min(7, 'رقم الهاتف قصير جداً')
+    .max(20, 'رقم الهاتف طويل جداً')
+    .required('رقم الهاتف مطلوب'),
+});
+
+export const tripValidationSchema = Yup.object({
+  trip_price: Yup.number()
+    .typeError('السعر لازم يكون رقم')
+    .positive('السعر لازم يكون أكبر من صفر')
+    .required('سعر الرحلة مطلوب'),
+  currency: Yup.string().required('العملة مطلوبة'),
+});
+
 // validation/dispatcherRequestSchema.ts
 
 export const dispatcherRequestSchema = Yup.object({

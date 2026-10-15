@@ -1,5 +1,4 @@
-import { ClientDetails } from '@/interface';
-import { formatDate } from '../../Utils/date';
+import { ClientDetails, Trip } from '@/interface';
 import { formatMoney } from '../../Utils/currency';
 import { getInitials } from '../../Utils/names';
 import { Pencil } from 'lucide-react';
@@ -9,10 +8,12 @@ const CustomerInfo = ({
   client,
   documentsCount,
   editHref,
+  trip,
 }: {
   client: ClientDetails;
   documentsCount?: number;
   editHref?: string;
+  trip?: Trip;
 }) => {
   return (
     <section
@@ -41,18 +42,21 @@ const CustomerInfo = ({
       >
         <div className="rounded-xl bg-[#dce5ef] px-4 py-3">
           <span className="block text-10 text-secondary-400">
-            إجمالي الرحلة
+            {trip ? 'قيمة الرحلة المحددة' : 'آخر قيمة رحلة'}
           </span>
           <strong className="mt-1 block text-13 text-secondary-950">
-            {formatMoney(client.trip_price, client.currency)}
+            {formatMoney(
+              trip?.trip_price ?? client.trip_price,
+              trip?.currency ?? client.currency,
+            )}
           </strong>
         </div>
         <div className="rounded-xl bg-[#dce5ef] px-4 py-3">
           <span className="block text-10 text-secondary-400">
-            تاريخ الإضافة
+            رقم العميل الثابت
           </span>
           <strong className="mt-1 block text-13 text-secondary-950">
-            {formatDate(client.created_at)}
+            {client.customer_code}
           </strong>
         </div>
         {documentsCount !== undefined && (

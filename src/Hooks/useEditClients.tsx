@@ -1,4 +1,3 @@
-import { AddClientForm, RecentClient } from '@/interface';
 import { createClient } from '../../lib/supabase/client';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -8,14 +7,16 @@ const useEditClient = () => {
   const supabase = createClient();
   const router = useRouter();
 
-  const addClient = async (values: RecentClient) => {
+  const addClient = async (values: {
+    id: string;
+    customer_name: string;
+    phone: string;
+  }) => {
     const { data, error } = await supabase
-      .from('clients')
+      .from('customers')
       .update({
         customer_name: values.customer_name,
         phone: values.phone,
-        trip_price: values.trip_price,
-        currency: values.currency,
       })
       .eq('id', values.id);
 
@@ -27,10 +28,11 @@ const useEditClient = () => {
     mutationKey: ['editclient'],
     mutationFn: addClient,
 
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success('تم تعديل العميل بنجاح', {
         position: 'top-center',
       });
+      router.refresh();
     },
 
     onError: (error: any) => {

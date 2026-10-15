@@ -32,7 +32,7 @@ const getAdminStatistics = async (): Promise<AdminStatisticsData> => {
   const rangeStart = startOfMonth.toISOString();
   const rangeEnd = startOfNextMonth.toISOString();
 
-  const [employeesResult, requestsResult, clientsResult] = await Promise.all([
+  const [employeesResult, requestsResult, customersResult, tripsResult] = await Promise.all([
     supabase
       .from('profiles')
       .select('id, name, avatar_url, is_active')
@@ -43,20 +43,26 @@ const getAdminStatistics = async (): Promise<AdminStatisticsData> => {
       .gte('created_at', rangeStart)
       .lt('created_at', rangeEnd),
     supabase
-      .from('clients')
+      .from('customers')
+      .select('employee_id')
+      .gte('created_at', rangeStart)
+      .lt('created_at', rangeEnd),
+    supabase
+      .from('trips')
       .select('employee_id, trip_price, currency')
       .gte('created_at', rangeStart)
       .lt('created_at', rangeEnd),
   ]);
 
-  const failedResult = [employeesResult, requestsResult, clientsResult].find(
+  const failedResult = [employeesResult, requestsResult, customersResult, tripsResult].find(
     (result) => result.error,
   );
 
   if (failedResult?.error) throw failedResult.error;
 
   const requests = requestsResult.data ?? [];
-  const clients = clientsResult.data ?? [];
+  const customers = customersResult.data ?? [];
+  const trips = tripsResult.data ?? [];
   const salesByCurrency: Record<string, number> = {};
   const sourceCounts: Record<string, number> = {};
   const employees = new Map<string, AdminEmployeeStatistic>();
@@ -81,15 +87,19 @@ const getAdminStatistics = async (): Promise<AdminStatisticsData> => {
     sourceCounts[source] = (sourceCounts[source] ?? 0) + 1;
   }
 
-  for (const client of clients) {
-    const employee = employees.get(client.employee_id);
-    const currency = client.currency?.trim() || '—';
-    const price = Number(client.trip_price ?? 0);
+  for (const customer of customers) {
+    const employee = employees.get(customer.employee_id);
+    if (employee) employee.clientsCount += 1;
+  }
+
+  for (const trip of trips) {
+    const employee = employees.get(trip.employee_id);
+    const currency = trip.currency?.trim() || '—';
+    const price = Number(trip.trip_price ?? 0);
 
     salesByCurrency[currency] = (salesByCurrency[currency] ?? 0) + price;
 
     if (employee) {
-      employee.clientsCount += 1;
       employee.salesByCurrency[currency] =
         (employee.salesByCurrency[currency] ?? 0) + price;
     }
@@ -116,7 +126,7 @@ const getAdminStatistics = async (): Promise<AdminStatisticsData> => {
   });
 
   return {
-    clientsCount: clients.length,
+    clientsCount: customers.length,
     requestsCount: requests.length,
     salesByCurrency,
     leadSources,

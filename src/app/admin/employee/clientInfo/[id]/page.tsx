@@ -19,12 +19,13 @@ import { notFound } from 'next/navigation';
 const ClientInfo = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
-  const [customerDetails, clientDocs] = await Promise.all([
-    getCustomerById(id),
-    getClientDocs(id),
-  ]);
+  const customerDetails = await getCustomerById(id);
 
   if (!customerDetails) notFound();
+  const selectedTrip = customerDetails.trips[0];
+  const clientDocs = selectedTrip
+    ? await getClientDocs(selectedTrip.id, customerDetails.id)
+    : [];
 
   const data = await getClientDocumentsSignedUrls(clientDocs[0]);
   const documentsCount = Object.values(data).filter(Boolean).length;
@@ -42,7 +43,7 @@ const ClientInfo = async ({ params }: { params: Promise<{ id: string }> }) => {
         </p>
       </div>
 
-      <CustomerInfo client={customerDetails} documentsCount={documentsCount} />
+      <CustomerInfo client={customerDetails} trip={selectedTrip} documentsCount={documentsCount} />
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         <ReadFileCard
@@ -114,7 +115,7 @@ const ClientInfo = async ({ params }: { params: Promise<{ id: string }> }) => {
           <div className="h-40 w-full rounded-b-2xl border border-neutral-300 bg-white p-4">
             <p className="text-14 font-bold text-secondary-900">
               {clientDocs[0]?.notes?.trim() ||
-                'لا توجد ملاحظات مضافة لهذا العميل.'}
+                'لا توجد ملاحظات مضافة لهذه الرحلة.'}
             </p>
           </div>
       </div>

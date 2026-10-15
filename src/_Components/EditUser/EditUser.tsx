@@ -4,27 +4,22 @@ import { Check, Save, UserRoundPen } from 'lucide-react';
 import { useFormik } from 'formik';
 import { RecentClient } from '@/interface';
 import useEditClient from '@/Hooks/useEditClients';
-import { clientValidationSchema } from '../../validation/validation';
+import { customerValidationSchema } from '../../validation/validation';
 
 const fieldClassName =
   'h-12 w-full rounded-xl border border-[#c8d4e2] bg-white px-4 text-14 text-secondary-950 outline-none transition focus:border-primary-300 focus:ring-2 focus:ring-primary-100';
 
-const currencies = [
-  { value: 'SAR', label: 'ريال سعودي — SAR' },
-  { value: 'EGP', label: 'جنيه مصري — EGP' },
-  { value: 'AED', label: 'درهم إماراتي — AED' },
-  { value: 'USD', label: 'دولار أمريكي — USD' },
-];
-
 const EditUser = ({ customer }: { customer: RecentClient }) => {
   const { mutate, isPending } = useEditClient();
-  const formik = useFormik<RecentClient>({
+  const formik = useFormik<{
+    id: string;
+    customer_name: string;
+    phone: string;
+  }>({
     initialValues: {
       id: customer.id || '',
       customer_name: customer.customer_name || '',
       phone: customer.phone || '',
-      trip_price: customer.trip_price || 0,
-      currency: customer.currency || '',
     },
     onSubmit: (values, { resetForm }) => {
       mutate(values, {
@@ -32,7 +27,7 @@ const EditUser = ({ customer }: { customer: RecentClient }) => {
       });
     },
     enableReinitialize: true,
-    validationSchema: clientValidationSchema,
+    validationSchema: customerValidationSchema,
   });
 
   const fields = [
@@ -47,12 +42,6 @@ const EditUser = ({ customer }: { customer: RecentClient }) => {
       name: 'phone',
       type: 'tel',
       placeholder: 'مثال: 050 123 4567',
-    },
-    {
-      label: 'إجمالي سعر الرحلة',
-      name: 'trip_price',
-      type: 'number',
-      placeholder: '0.00',
     },
   ] as const;
 
@@ -69,7 +58,7 @@ const EditUser = ({ customer }: { customer: RecentClient }) => {
             </h2>
           </div>
           <p className="mr-9 mt-1 text-11 text-secondary-400">
-            بيانات التواصل والتكلفة الأساسية للرحلة.
+            بيانات العميل الثابتة التي تُستخدم في جميع رحلاته.
           </p>
         </div>
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-primary-500">
@@ -111,38 +100,6 @@ const EditUser = ({ customer }: { customer: RecentClient }) => {
             );
           })}
 
-          <div>
-            <label
-              htmlFor="currency"
-              className="mb-2 block text-13 font-semibold text-secondary-700"
-            >
-              العملة
-            </label>
-            <select
-              id="currency"
-              name="currency"
-              value={formik.values.currency}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`${fieldClassName} ${
-                formik.touched.currency && formik.errors.currency ?
-                  'border-red-300 focus:border-red-400 focus:ring-red-100'
-                : ''
-              }`}
-            >
-              <option value="">اختر العملة</option>
-              {currencies.map((currency) => (
-                <option key={currency.value} value={currency.value}>
-                  {currency.label}
-                </option>
-              ))}
-            </select>
-            {formik.touched.currency && formik.errors.currency && (
-              <p className="mt-1.5 text-12 text-red-500">
-                {String(formik.errors.currency)}
-              </p>
-            )}
-          </div>
         </div>
 
         <div className="mt-6 flex flex-col-reverse gap-3 border-t border-[#d4dfeb] pt-5 sm:flex-row sm:items-center sm:justify-between">

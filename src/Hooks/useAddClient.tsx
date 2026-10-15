@@ -2,27 +2,26 @@ import { AddClientForm } from '@/interface';
 import { createClient } from '../../lib/supabase/client';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
 
 const useAddClient = () => {
   const supabase = createClient();
-  const router = useRouter();
-
   const addClient = async (values: AddClientForm) => {
     const { data, error } = await supabase
-      .from('clients')
-      .insert({
-        customer_name: values.customer_name,
-        phone: values.phone,
-        trip_price: values.trip_price,
-        currency: values.currency,
+      .rpc('create_customer_with_first_trip', {
+        p_customer_name: values.customer_name,
+        p_phone: values.phone,
+        p_trip_price: values.trip_price,
+        p_currency: values.currency,
       })
-      .select('id')
       .single();
 
     if (error) throw error;
 
-    return data; // { id: ... }
+    return data as {
+      customer_id: string;
+      trip_id: string;
+      customer_code: string;
+    };
   };
 
   return useMutation({
@@ -36,7 +35,11 @@ const useAddClient = () => {
     },
 
     onError: (error: any) => {
-      toast.error(error.message || 'فشل في إضافة العميل', {
+      const message =
+        error?.code === '23505'
+          ? 'هذا العميل مسجل بالفعل. افتح صفحة العملاء وأضف رحلة جديدة من ملفه.'
+          : error.message || 'فشل في إضافة العميل';
+      toast.error(message, {
         position: 'top-center',
       });
     },

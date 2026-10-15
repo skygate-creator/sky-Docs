@@ -29,7 +29,8 @@ interface DocumentFiles {
 }
 
 interface EditClientDocsProps {
-  clientId: string;
+  customerId: string;
+  tripId: string;
   employeeId: string;
   documentsUrls: DocumentFiles;
   documentPaths: DocumentFiles | null;
@@ -62,7 +63,8 @@ const getStoredFileName = (path: string | null | undefined, fallback: string) =>
 };
 
 const EditClientDocs = ({
-  clientId,
+  customerId,
+  tripId,
   employeeId,
   documentsUrls,
   documentPaths,
@@ -73,7 +75,8 @@ const EditClientDocs = ({
 
   const formik = useFormik<ClientDocsFormValues>({
     initialValues: {
-      client_id: clientId,
+      customer_id: customerId,
+      trip_id: tripId,
       flight_path: null,
       voucher_path: null,
       car_path: null,

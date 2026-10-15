@@ -20,7 +20,7 @@ const AddUserForm = () => {
       mutate(values, {
         onSuccess: (data) => {
           resetForm();
-          router.replace(`/employee/customer/${data.id}`);
+          router.replace(`/employee/customer/${data.trip_id}`);
         },
       });
     },
@@ -31,10 +31,10 @@ const AddUserForm = () => {
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
           <h2 className="text-18 font-bold text-secondary-950">
-            إضافة عميل جديد
+            إضافة عميل ورحلته الأولى
           </h2>
           <p className="mt-1 text-12 text-secondary-400">
-            ابدأ بالبيانات الأساسية للرحلة.
+            العميل سيحصل على رقم ثابت، ويمكنك إضافة رحلات أخرى له لاحقًا.
           </p>
         </div>
         <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary-50 text-primary-500">
@@ -89,7 +89,7 @@ const AddUserForm = () => {
           </div>
           <div className="mt-5 flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
             <p className="text-11 text-secondary-400">
-              التالي: إضافة مستندات الرحلة
+              التالي: جواز العميل ومستندات الرحلة الأولى
             </p>
             <button
               className="flex min-h-11 items-center justify-center gap-2 rounded-[10px] bg-primary-500 px-6 text-13 font-bold text-white transition-colors hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-60"

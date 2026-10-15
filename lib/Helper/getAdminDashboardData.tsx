@@ -1,4 +1,5 @@
 import { createClient } from '../supabase/server';
+import { mapCustomer } from './mapCustomer';
 
 const getAdminDashboardData = async () => {
   const supabase = await createClient();
@@ -17,29 +18,31 @@ const getAdminDashboardData = async () => {
       .from('profiles')
       .select('*', { count: 'exact', head: true })
       .eq('role', 'employee'),
-    supabase.from('clients').select('*', { count: 'exact', head: true }),
+    supabase.from('customers').select('*', { count: 'exact', head: true }),
     supabase
       .from('requests')
       .select('*', { count: 'exact', head: true })
       .gte('created_at', startOfMonth.toISOString())
       .lt('created_at', startOfNextMonth.toISOString()),
     supabase
-      .from('clients')
+      .from('customers')
       .select(
         `
           id,
+          customer_code,
           customer_name,
           phone,
-          trip_price,
-          currency,
           employee_id,
           created_at,
+          updated_at,
+          trips (*),
+          customer_files (passport_path),
           profiles:employee_id (name)
         `,
       )
       .order('created_at', { ascending: false })
       .limit(5),
-    supabase.from('clients').select('trip_price, currency'),
+    supabase.from('trips').select('trip_price, currency'),
   ]);
 
   const results = [
@@ -61,11 +64,13 @@ const getAdminDashboardData = async () => {
     return totals;
   }, {});
 
-  const recentClients = (recentClientsResult.data ?? []).map((client) => ({
-    ...client,
-    profiles:
-      Array.isArray(client.profiles) ? client.profiles[0] : client.profiles,
-  }));
+  const recentClients = (recentClientsResult.data ?? []).map((client) =>
+    mapCustomer({
+      ...client,
+      profiles:
+        Array.isArray(client.profiles) ? client.profiles[0] : client.profiles,
+    } as never),
+  );
   return {
     employeesCount: employeesResult.count ?? 0,
     clientsCount: clientsResult.count ?? 0,

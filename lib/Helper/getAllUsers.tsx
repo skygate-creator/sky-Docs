@@ -10,7 +10,7 @@ const getAllUsers = async (): Promise<EmployeeDirectoryItem[]> => {
       .select('*')
       .eq('role', 'employee')
       .order('created_at', { ascending: false }),
-    supabase.from('clients').select('employee_id'),
+    supabase.from('customers').select('employee_id'),
     supabase.from('requests').select('employee_id'),
   ]);
 

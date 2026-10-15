@@ -7,20 +7,27 @@ import getUserProfile from '../../../../../../lib/Helper/getUserProfile';
 import Link from 'next/link';
 import { ArrowRight, UserRoundPen } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import EditTrip from '@/_Components/EditTrip/EditTrip';
 
 const EditCustomer = async ({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ trip?: string }>;
 }) => {
   const { id } = await params;
-  const [customer, clientDocs, user] = await Promise.all([
+  const { trip: requestedTripId } = await searchParams;
+  const [customer, user] = await Promise.all([
     getCustomerById(id),
-    getClientDocs(id),
     getUserProfile(),
   ]);
 
   if (!customer || !user) notFound();
+  const selectedTrip =
+    customer.trips.find((trip) => trip.id === requestedTripId) ?? customer.trips[0];
+  if (!selectedTrip) notFound();
+  const clientDocs = await getClientDocs(selectedTrip.id, customer.id);
   const data = await getClientDocumentsSignedUrls(clientDocs[0]);
 
   return (
@@ -38,7 +45,7 @@ const EditCustomer = async ({
             تعديل بيانات العميل
           </h1>
           <p className="mt-1 text-13 font-medium text-secondary-400">
-            حدّث البيانات الأساسية والمستندات الخاصة بالرحلة.
+            حدّث بيانات العميل الثابتة أو بيانات ومستندات الرحلة المحددة.
           </p>
         </div>
 
@@ -58,8 +65,10 @@ const EditCustomer = async ({
       </header>
 
       <EditUser customer={customer} />
+      <EditTrip trip={selectedTrip} />
       <EditClientDocs
-        clientId={id}
+        customerId={id}
+        tripId={selectedTrip.id}
         documentsUrls={data}
         documentPaths={clientDocs[0] ?? null}
         employeeId={user.id}

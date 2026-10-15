@@ -16,17 +16,22 @@ import {
 import { ClientDocsFormValues } from '@/interface';
 
 const ClientDocs = ({
-  clientId,
+  customerId,
+  tripId,
   employeeId,
+  hasPassport,
 }: {
-  clientId: string;
+  customerId: string;
+  tripId: string;
   employeeId: string;
+  hasPassport: boolean;
 }) => {
   const { mutate: uploadClientDocs, isPending } = useUploadClientDocs();
 
   const formik = useFormik<ClientDocsFormValues>({
     initialValues: {
-      client_id: clientId,
+      customer_id: customerId,
+      trip_id: tripId,
       flight_path: null,
       voucher_path: null,
       car_path: null,
@@ -87,11 +92,19 @@ const ClientDocs = ({
             onFileSelect={(file) => formik.setFieldValue('package_path', file)}
           />
 
-          <FileUploadCard
-            icon={BadgeCheck}
-            name="جواز السفر"
-            onFileSelect={(file) => formik.setFieldValue('passport_path', file)}
-          />
+          {hasPassport ? (
+            <div className="flex min-h-40 flex-col items-center justify-center rounded-2xl border border-green-200 bg-green-50 p-5 text-center text-green-700">
+              <BadgeCheck className="h-7 w-7" />
+              <strong className="mt-3 text-13">جواز السفر محفوظ</strong>
+              <p className="mt-1 text-11">سيتم ربطه بهذه الرحلة تلقائيًا.</p>
+            </div>
+          ) : (
+            <FileUploadCard
+              icon={BadgeCheck}
+              name="جواز السفر"
+              onFileSelect={(file) => formik.setFieldValue('passport_path', file)}
+            />
+          )}
 
           <FileUploadCard
             icon={Building2}
@@ -131,7 +144,7 @@ const ClientDocs = ({
         >
           {isPending ?
             <span className="loader" />
-          : 'حفظ المستندات'}
+          : 'حفظ جواز العميل ومستندات الرحلة'}
         </button>
       </form>
     </div>

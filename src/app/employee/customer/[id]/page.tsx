@@ -1,4 +1,4 @@
-import getCustomerById from '../../../../../lib/Helper/getCustomerById';
+import getTripById from '../../../../../lib/Helper/getTripById';
 import CustomerInfo from '@/_Components/CustomerInfo/CustomerInfo';
 import ClientDocs from '@/_Components/ClientDocs/ClientDocs';
 import getUserProfile from '../../../../../lib/Helper/getUserProfile';
@@ -10,17 +10,22 @@ const customerDetails = async ({
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
-  const [customerDetails, user] = await Promise.all([
-    getCustomerById(id),
+  const [trip, user] = await Promise.all([
+    getTripById(id),
     getUserProfile(),
   ]);
 
-  if (!customerDetails || !user) notFound();
+  if (!trip || !user) notFound();
 
   return (
     <section className="flex flex-col gap-5 p-3">
-      <CustomerInfo client={customerDetails} />
-      <ClientDocs clientId={id} employeeId={user.id} />
+      <CustomerInfo client={trip.customer} trip={trip} />
+      <ClientDocs
+        customerId={trip.customer_id}
+        tripId={trip.id}
+        employeeId={user.id}
+        hasPassport={Boolean(trip.customer.customer_files?.passport_path)}
+      />
     </section>
   );
 };

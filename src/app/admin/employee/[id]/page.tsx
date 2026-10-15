@@ -31,16 +31,19 @@ const employeeDetails = async ({
     const createdAt = new Date(request.created_at ?? 0).getTime();
     return createdAt >= startOfMonth && createdAt < startOfNextMonth;
   }).length;
-  const totalsByCurrency = userClients.reduce<Record<string, number>>(
-    (totals, client) => {
-      const currency = client.currency || 'SAR';
-      totals[currency] = (totals[currency] ?? 0) + Number(client.trip_price || 0);
+  const totalsByCurrency = userClients
+    .flatMap((client) => client.trips)
+    .reduce<Record<string, number>>(
+    (totals, trip) => {
+      const currency = trip.currency || 'SAR';
+      totals[currency] = (totals[currency] ?? 0) + Number(trip.trip_price || 0);
       return totals;
     },
     {},
   );
   const latestActivityAt = [
     ...userClients.map((client) => client.created_at),
+    ...userClients.flatMap((client) => client.trips.map((trip) => trip.created_at)),
     ...employeeRequests.map((request) => request.created_at),
   ]
     .filter((date): date is string => Boolean(date))
