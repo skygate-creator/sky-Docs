@@ -31,8 +31,8 @@ export const getSafeFileName = (fileName: string) => {
   const extension = fileName.toLowerCase().endsWith('.pdf') ? '.pdf' : '';
   const baseName = fileName
     .slice(0, extension ? -extension.length : undefined)
-    .normalize('NFKC')
-    .replace(/[^\p{L}\p{N}._-]+/gu, '-')
+    .normalize('NFKD')
+    .replace(/[^A-Za-z0-9._-]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 100);
 
